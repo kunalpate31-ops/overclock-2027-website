@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OVERCLOCK 2027 | FCRIT × IEEE Student Branch</title>
+  <meta name="description" content="Official website for OVERCLOCK 2027 — Hardware Hackathon, organized by FCRIT IEEE Student Branch. 24-hour on-campus hardware build in a retro-futuristic Time Bureau.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Special+Elite&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==========================================================
+       1. FAST BOOT SEQUENCE OVERLAY (MAX 2.5S / SESSION CACHED)
+  ========================================================== -->
+  <div id="boot-overlay" class="boot-overlay" aria-live="polite" aria-label="Bureau Boot Sequence">
+    <div class="boot-terminal-card">
+      <div class="boot-header">
+        <span class="boot-dot amber"></span>
+        <span class="boot-dot mustard"></span>
+        <span class="boot-dot green"></span>
+        <span class="boot-title">OVERCLOCK_BUREAU // TIME SYNC v2.7</span>
+      </div>
+      
+      <!-- Original Mascot: TICK (555 Timer IC) -->
+      <div class="boot-mascot-container">
+        <svg class="tick-mascot-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 8 DIP Pins (legs) -->
+          <rect x="8" y="10" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="8" y="24" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="8" y="38" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="8" y="52" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="50" y="10" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="50" y="24" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="50" y="38" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <rect x="50" y="52" width="6" height="4" rx="1" fill="#D9A93A"/>
+          <!-- IC Body -->
+          <rect x="14" y="6" width="36" height="52" rx="4" fill="#1C150F" stroke="#E8892B" stroke-width="2"/>
+          <!-- Top Notch -->
+          <path d="M28 6 C28 10 36 10 36 6" fill="#14100C" stroke="#E8892B" stroke-width="1.5"/>
+          <!-- Cute Retro Eyes & Dial -->
+          <circle cx="26" cy="28" r="3.5" fill="#FF9D3B"/>
+          <circle cx="38" cy="28" r="3.5" fill="#FF9D3B"/>
+          <!-- Smile -->
+          <path d="M28 38 Q32 44 36 38" stroke="#EFE6D2" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <!-- Clock Hand Antenna -->
+          <line x1="32" y1="6" x2="32" y2="0" stroke="#EFE6D2" stroke-width="2"/>
+          <circle cx="32" cy="0" r="2.5" fill="#E8892B"/>
+        </svg>
+        <div class="mascot-speech-bubble">
+          "Clock check... OK! Bureau systems ready."
+        </div>
+      </div>
+
+      <div class="boot-log" id="boot-log">
+        <div class="boot-line" data-step="1"><span class="prompt">&gt;</span> BUREAU SYSTEMS ONLINE</div>
+        <div class="boot-line" data-step="2"><span class="prompt">&gt;</span> SYNCHRONIZING CLOCKS...</div>
+        <div class="boot-line" data-step="3"><span class="prompt">&gt;</span> PRIME TIMELINE: STABLE</div>
+        <div class="boot-line highlight" data-step="4"><span class="prompt">&gt;</span> OVERCLOCK PROTOCOL: READY</div>
+      </div>
+      <div class="boot-progress-bar">
+        <div class="boot-progress-fill" id="boot-progress-fill"></div>
+      </div>
+      <div class="boot-skip-hint">Click or press any key to skip</div>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       2. PERSISTENT GLOBAL CANVAS & RETRO CRT/GRAIN OVERLAYS
+  ========================================================== -->
+  <canvas id="circuit-canvas" class="bg-canvas" aria-hidden="true"></canvas>
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <!-- ==========================================================
+       3. SIGNATURE ELEMENT — THE PRIME TIMELINE (LEFT RAIL)
+  ========================================================== -->
+  <aside class="prime-timeline-rail" aria-hidden="true">
+    <svg class="timeline-svg-canvas" viewBox="0 0 48 1000" preserveAspectRatio="none">
+      <!-- Background Guide Line -->
+      <line x1="24" y1="0" x2="24" y2="1000" class="timeline-back-trace"/>
+      <!-- Active Illuminated Trace -->
+      <line id="active-timeline-trace" x1="24" y1="0" x2="24" y2="0" class="timeline-active-trace"/>
+      <!-- Scroll Runner Pulse -->
+      <circle id="timeline-pulse-runner" cx="24" cy="0" r="5" class="timeline-pulse-runner"/>
+      <!-- Small Clock-Tick Marks -->
+      <line x1="16" y1="120" x2="32" y2="120" class="timeline-tick-mark"/>
+      <line x1="16" y1="280" x2="32" y2="280" class="timeline-tick-mark"/>
+      <line x1="16" y1="440" x2="32" y2="440" class="timeline-tick-mark"/>
+      <line x1="16" y1="600" x2="32" y2="600" class="timeline-tick-mark"/>
+      <line x1="16" y1="760" x2="32" y2="760" class="timeline-tick-mark"/>
+      <line x1="16" y1="920" x2="32" y2="920" class="timeline-tick-mark"/>
+    </svg>
+  </aside>
+
+  <!-- ==========================================================
+       4. NAVBAR — BRASS BUREAU NAMEPLATE BAR
+  ========================================================== -->
+  <header class="bureau-navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-brand-group" aria-label="OVERCLOCK 2027 Homepage">
+        <div class="brand-badge">
+          <span class="fcrit-tag">FCRIT</span>
+          <span class="ieee-tag">× IEEE SB</span>
+        </div>
+        <span class="brand-wordmark">OVERCLOCK</span>
+      </a>
+
+      <nav aria-label="Bureau Sections">
+        <ul class="nav-links-menu">
+          <li><a href="#about" class="nav-item-link"><span class="nav-indicator-dot"></span>About</a></li>
+          <li><a href="#branches" class="nav-item-link"><span class="nav-indicator-dot"></span>Branches</a></li>
+          <li><a href="#timeline" class="nav-item-link"><span class="nav-indicator-dot"></span>Timeline</a></li>
+          <li><a href="#overclock-24h" class="nav-item-link"><span class="nav-indicator-dot"></span>24H</a></li>
+          <li><a href="#labs" class="nav-item-link"><span class="nav-indicator-dot"></span>Labs</a></li>
+          <li><a href="#sponsors" class="nav-item-link"><span class="nav-indicator-dot"></span>Sponsors</a></li>
+          <li><a href="#faq" class="nav-item-link"><span class="nav-indicator-dot"></span>FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="audio-toggle-btn" class="audio-toggle-btn" aria-label="Toggle Relay & Clock Sound FX">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path id="sound-icon-waves" d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+        </button>
+        <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
+        <button class="mobile-menu-toggle" aria-label="Toggle Mobile Navigation">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================
+       MAIN CONTENT LAYER (THE OVERCLOCK BUREAU)
+  ========================================================== -->
+  <main class="main-bureau-content">
+
+    <!-- ========================================================
+         LEVEL 01: HERO SECTION
+    ======================================================== -->
+    <section id="hero" class="bureau-section hero-bureau-section stamped" data-section-num="01">
+      <div class="section-rubber-stamp">LOGGED #01</div>
+
+      <!-- Large Analog Clock Backdrop -->
+      <div class="hero-clock-backdrop" aria-hidden="true">
+        <div class="clock-face-dial">
+          <div class="clock-hand-hour" id="hero-clock-hour"></div>
+          <div class="clock-hand-min" id="hero-clock-min"></div>
+          <div class="clock-hand-sec" id="hero-clock-sec"></div>
+        </div>
+      </div>
+
+      <div class="hero-content-wrap">
+        <div class="bureau-tag amber">FCRIT × IEEE STUDENT BRANCH • PROPOSED THEME • SUBJECT TO APPROVAL</div>
+
+        <div class="hero-title-container">
+          <!-- Split-Flap Assembling Title -->
+          <div class="split-flap-title" aria-label="OVERCLOCK">
+            <div class="flap-char-box">O</div>
+            <div class="flap-char-box">V</div>
+            <div class="flap-char-box">E</div>
+            <div class="flap-char-box">R</div>
+            <div class="flap-char-box">C</div>
+            <div class="flap-char-box">L</div>
+            <div class="flap-char-box">O</div>
+            <div class="flap-char-box">C</div>
+            <div class="flap-char-box">K</div>
+          </div>
+          <div class="hero-subhead">2027 — HARDWARE HACKATHON</div>
+          <p class="hero-tagline">Build before time runs out.</p>
+        </div>
+
+        <!-- Typed Office Form Strip -->
+        <div class="typed-form-strip">
+          <div class="form-field-unit">
+            <span class="field-label">SCHEDULED</span>
+            <span class="field-value">January 2027 (Exact dates TBD)</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">FORMAT</span>
+            <span class="field-value">24-hour on-campus physical build</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">TEAM SIZE</span>
+            <span class="field-value">TBD</span>
+          </div>
+          <div class="form-field-unit">
+            <span class="field-label">ELIGIBILITY</span>
+            <span class="field-value">TBD</span>
+          </div>
+        </div>
+
+        <div class="hero-cta-group">
+          <button class="btn-bureau-brass open-case-file-trigger">Open a Case File</button>
+          <a href="#branches" class="btn-bureau-secondary">View the Branches</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 02: ABOUT — MANILA CASE FILE BRIEFING
+    ======================================================== -->
+    <section id="about" class="bureau-section" data-section-num="02">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">CASE DOSSIER // LEVEL 02</div>
+        <h2 class="section-main-heading">Briefing: What is OVERCLOCK?</h2>
+        <p class="section-subtext">Official briefing notes from the Bureau. Physical hardware engineering under tight clock cycles.</p>
+      </div>
+
+      <div class="case-file-dossier">
+        <div class="case-file-tab">CLASSIFIED: BRIEFING</div>
+        
+        <div class="case-notes-grid">
+          <!-- Note 1 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 01 // OVERVIEW</div>
+            <h3 class="note-title">WHAT IT IS</h3>
+            <p class="note-body">A 24-hour on-campus hackathon where teams design and build working physical hardware prototypes, not just software or presentation decks.</p>
+          </div>
+
+          <!-- Note 2 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 02 // PERSONNEL</div>
+            <h3 class="note-title">WHO CAN JOIN</h3>
+            <p class="note-body">Eligibility criteria, team compositions, and registration details: TBD following formal departmental approval.</p>
+          </div>
+
+          <!-- Note 3 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 03 // LOGISTICS</div>
+            <h3 class="note-title">WHAT YOU GET</h3>
+            <p class="note-body">Full lab facility access, component provisioning, technical mentorship, and prize pool: details TBD post-sanction.</p>
+          </div>
+
+          <!-- Note 4 -->
+          <div class="case-note-card">
+            <div class="paperclip-graphic"></div>
+            <div class="note-header-label">MEMO 04 // RATIONALE</div>
+            <h3 class="note-title">WHY HARDWARE</h3>
+            <p class="note-body">Real circuits, real physical sensors, real oscilloscope debugging: build something tangible you can actually hold and deploy.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================
+           MINI PUZZLE: SYNC THE CLOCK (555 TIMER)
+      ====================================================== -->
+      <div class="puzzle-bureau-container">
+        <div class="bureau-tag amber">BUREAU BENCH // OPTIONAL PUZZLE</div>
+        <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--paper-cream); margin: 8px 0 18px;">Sync the Clock Oscillator</h3>
+        
+        <div class="puzzle-grid">
+          <div class="circuit-schematic-board">
+            <div class="ic-555-chip">
+              <span class="ic-label">NE555_TIMER // CLOCK PULSE GEN</span>
+              <span id="puzzle-led-indicator" style="width: 12px; height: 12px; border-radius: 50%; background: #443; border: 1px solid var(--border-brass);"></span>
+            </div>
+
+            <div class="switches-control-row">
+              <div class="toggle-switch-unit" id="puzzle-sw-1" data-switch="1">
+                <span class="switch-indicator-led"></span>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_A (CAPACITOR BANK)</span>
+              </div>
+              <div class="toggle-switch-unit" id="puzzle-sw-2" data-switch="2">
+                <span class="switch-indicator-led"></span>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_B (DISCHARGE RESISTOR)</span>
+              </div>
+              <div class="toggle-switch-unit" id="puzzle-sw-3" data-switch="3">
+                <span class="switch-indicator-led"></span>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--paper-cream);">SW_C (CONTROL VOLTAGE)</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 16px; align-items: center; margin-top: 10px;">
+              <span class="puzzle-status-readout" id="puzzle-status">Status: Clock unsynchronized. Toggle switches to align frequency.</span>
+              <button id="puzzle-solution-btn" style="background: transparent; border: none; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); text-decoration: underline; cursor: pointer;">Show solution</button>
+            </div>
+          </div>
+
+          <div class="clock-sync-dial-wrap">
+            <div class="sync-clock-dial">
+              <div class="hand" id="sync-clock-hand" style="transform: rotate(0deg);"></div>
+            </div>
+            <button id="puzzle-unlocked-cta" class="btn-bureau-brass open-case-file-trigger" style="opacity: 0.5; pointer-events: none; margin-top: 6px;">Case File Locked</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 03: DOMAINS — THE FOUR BRANCHES (CRT MONITORS)
+    ======================================================== -->
+    <section id="branches" class="bureau-section" data-section-num="03">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">PROPOSED DOMAINS • SUBJECT TO APPROVAL</div>
+        <h2 class="section-main-heading">The Four Branches</h2>
+        <p class="section-subtext">The Prime Timeline splits into four focused engineering sectors. Pick your hardware trajectory.</p>
+      </div>
+
+      <!-- 4 CRT Monitor Domain Cards -->
+      <div class="crt-monitors-grid">
+        <!-- Branch 01: Green Phosphor -->
+        <div class="crt-monitor-card green">
+          <div class="crt-screen-housing">
+            <div class="crt-branch-code">BRANCH 01 // PHOSPHOR GREEN</div>
+            <h3 class="crt-title">Sustainable Technology</h3>
+            <p class="crt-description">Energy harvesting, low-power sensor arrays, circular electronics lifecycle, precision agricultural hardware, and smart water management systems.</p>
+            <div class="crt-tags-row">
+              <span class="crt-tag">Energy Harvesting</span>
+              <span class="crt-tag">AgriTech</span>
+              <span class="crt-tag">Low-Power</span>
+            </div>
+          </div>
+          <div class="crt-chassis-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 433 MHz</span>
+            <div class="crt-dial"></div>
+          </div>
+        </div>
+
+        <!-- Branch 02: Cyan Phosphor -->
+        <div class="crt-monitor-card cyan">
+          <div class="crt-screen-housing">
+            <div class="crt-branch-code">BRANCH 02 // PHOSPHOR CYAN</div>
+            <h3 class="crt-title">Smart Communities</h3>
+            <p class="crt-description">Connected IoT sensor networks, intelligent traffic grid automation, smart campus systems, and decentralized environmental air monitoring.</p>
+            <div class="crt-tags-row">
+              <span class="crt-tag">IoT Mesh</span>
+              <span class="crt-tag">Grid Automation</span>
+              <span class="crt-tag">Urban Sensing</span>
+            </div>
+          </div>
+          <div class="crt-chassis-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 868 MHz</span>
+            <div class="crt-dial"></div>
+          </div>
+        </div>
+
+        <!-- Branch 03: Violet Phosphor -->
+        <div class="crt-monitor-card violet">
+          <div class="crt-screen-housing">
+            <div class="crt-branch-code">BRANCH 03 // PHOSPHOR VIOLET</div>
+            <h3 class="crt-title">Intelligent Systems</h3>
+            <p class="crt-description">Edge AI computing, on-device neural processing, autonomous robotic controllers, computer vision embedded rigs, and assistive biomedical hardware.</p>
+            <div class="crt-tags-row">
+              <span class="crt-tag">Edge AI</span>
+              <span class="crt-tag">Robotics</span>
+              <span class="crt-tag">BioTech</span>
+            </div>
+          </div>
+          <div class="crt-chassis-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 2.4 GHz</span>
+            <div class="crt-dial"></div>
+          </div>
+        </div>
+
+        <!-- Branch 04: Amber Phosphor -->
+        <div class="crt-monitor-card amber">
+          <div class="crt-screen-housing">
+            <div class="crt-branch-code">BRANCH 04 // PHOSPHOR AMBER</div>
+            <h3 class="crt-title">Resilient Infrastructure</h3>
+            <p class="crt-description">Industrial automation, structural health vibration monitors, offline mesh communications, and fail-safe disaster emergency hardware nodes.</p>
+            <div class="crt-tags-row">
+              <span class="crt-tag">Industrial IoT</span>
+              <span class="crt-tag">Telemetry</span>
+              <span class="crt-tag">Fail-Safe</span>
+            </div>
+          </div>
+          <div class="crt-chassis-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">FREQ: 915 MHz</span>
+            <div class="crt-dial"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 04: EVENT TIMELINE — TIMELINE REEL
+    ======================================================== -->
+    <section id="timeline" class="bureau-section" data-section-num="04">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">CHRONOMETRIC ARCHIVE // LEVEL 04</div>
+        <h2 class="section-main-heading">The Timeline</h2>
+        <p class="section-subtext">Unrolling the phases of OVERCLOCK 2027. Step-by-step progression toward the physical build.</p>
+      </div>
+
+      <div class="timeline-reel-deck">
+        <div class="reel-spools-header">
+          <div class="spool-graphic" aria-hidden="true"></div>
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--amber-bright); letter-spacing: 0.1em; text-align: center;">
+            35MM MAGNETIC REEL // MASTER TIMELINE TAPE
+          </div>
+          <div class="spool-graphic" aria-hidden="true"></div>
+        </div>
+
+        <div class="film-strip-track">
+          <!-- Frame 1 -->
+          <div class="film-frame-card">
+            <div class="frame-sprocket-holes">
+              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+            </div>
+            <div class="frame-phase-tag">FRAME I</div>
+            <h3 class="frame-title">Call for Proposals</h3>
+            <div class="frame-date">Oct – Nov 2026</div>
+            <div class="frame-stamp-badge">PENDING APPROVAL</div>
+          </div>
+
+          <!-- Frame 2 -->
+          <div class="film-frame-card">
+            <div class="frame-sprocket-holes">
+              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+            </div>
+            <div class="frame-phase-tag">FRAME II</div>
+            <h3 class="frame-title">Review & Shortlisting</h3>
+            <div class="frame-date">Dec 2026</div>
+            <div class="frame-stamp-badge">DRAFT</div>
+          </div>
+
+          <!-- Frame 3 -->
+          <div class="film-frame-card active-phase">
+            <div class="frame-sprocket-holes">
+              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+            </div>
+            <div class="frame-phase-tag" style="color: var(--amber-bright); font-weight: bold;">FRAME III (PEAK EVENT)</div>
+            <h3 class="frame-title">The 24-Hour OVERCLOCK</h3>
+            <div class="frame-date">January 2027 (Exact Dates TBD)</div>
+            <div class="frame-stamp-badge" style="border-color: var(--amber-bright); color: var(--amber-bright);">THE 24H BUILD</div>
+          </div>
+
+          <!-- Frame 4 -->
+          <div class="film-frame-card">
+            <div class="frame-sprocket-holes">
+              <span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span><span class="sprocket-hole"></span>
+            </div>
+            <div class="frame-phase-tag">FRAME IV</div>
+            <h3 class="frame-title">Demo & Awards</h3>
+            <div class="frame-date">Finals Evaluation</div>
+            <div class="frame-stamp-badge">DRAFT</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 05: 24 HOURS — THE OVERCLOCK (PEAK ENERGY)
+    ======================================================== -->
+    <section id="overclock-24h" class="bureau-section" data-section-num="05">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">HIGH ACTIVITY ZONE // LEVEL 05</div>
+        <h2 class="section-main-heading">24 Hours. One Build.</h2>
+        <p class="section-subtext">The core overclock crucible. Non-stop soldering, circuit debugging, microcontroller flashing, and hardware execution.</p>
+      </div>
+
+      <div class="overclock-crucible-chamber">
+        <!-- Split Flap 24:00:00 Timer -->
+        <div class="split-flap-timer-display" aria-label="24:00:00 Duration">
+          <div class="timer-flap-unit">24</div>
+          <div class="timer-flap-unit">:</div>
+          <div class="timer-flap-unit">00</div>
+          <div class="timer-flap-unit">:</div>
+          <div class="timer-flap-unit">00</div>
+        </div>
+
+        <div style="display: block;">
+          <div class="countdown-announcement-pill">
+            <span style="color: var(--amber-bright);">●</span> COUNTDOWN BEGINS WHEN DATES ARE ANNOUNCED
+          </div>
+        </div>
+
+        <!-- 5 Stages Dial Markers -->
+        <div class="stages-dial-row">
+          <div class="stage-dial-pill active">STAGE 01: IDEATE</div>
+          <div class="stage-dial-pill active">STAGE 02: BUILD</div>
+          <div class="stage-dial-pill active">STAGE 03: TEST</div>
+          <div class="stage-dial-pill active">STAGE 04: DEBUG</div>
+          <div class="stage-dial-pill active">STAGE 05: DEMO</div>
+        </div>
+
+        <!-- Floor Rules Spec Panel -->
+        <div class="floor-rules-panel">
+          <div style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--amber-bright); margin-bottom: 8px;">
+            BUREAU OPERATING NOTICE // FLOOR RULES (SUBJECT TO CONFIRMATION)
+          </div>
+          <p>1. All prototyping must take place physically on campus during the allocated 24-hour cycle.</p>
+          <p>2. Pre-assembled custom hardware boards are strictly prohibited. Generic breakout boards and modules permitted.</p>
+          <p>3. Dedicated debugging stations and electrical safety test benches will be staffed continuously.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 06: LABS — EQUIPMENT REQUISITION FORM
+    ======================================================== -->
+    <section id="labs" class="bureau-section" data-section-num="06">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">FACILITY REQUISITION // LEVEL 06</div>
+        <h2 class="section-main-heading">Labs & Equipment</h2>
+        <p class="section-subtext">Facilities and hardware equipment subject to confirmation by the department.</p>
+      </div>
+
+      <div class="requisition-paper-sheet">
+        <div class="sheet-header-line">
+          <span>FORM OC-27/LAB · REV 0.1 · DRAFT</span>
+          <span>CAMPUS HARDWARE INVENTORY</span>
+        </div>
+
+        <table class="equipment-table">
+          <thead>
+            <tr>
+              <th>CATEGORY</th>
+              <th>EQUIPMENT & TOOLS</th>
+              <th>AVAILABILITY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Measurement</strong></td>
+              <td>Digital Storage Oscilloscopes (DSOs), Digital Multimeters (DMMs), Logic Analyzers, Frequency Counters</td>
+              <td><span class="status-badge-tbc">TBC</span></td>
+            </tr>
+            <tr>
+              <td><strong>Assembly & Soldering</strong></td>
+              <td>Temperature-Controlled Soldering Stations, De-soldering Pumps, Hot Air Rework Stations, Fume Extractors</td>
+              <td><span class="status-badge-tbc">TBC</span></td>
+            </tr>
+            <tr>
+              <td><strong>Prototyping</strong></td>
+              <td>Breadboards, Jumper Bundles, SMD Breakout Adapters, Component Drawers (Passives, ICs, Transistors)</td>
+              <td><span class="status-badge-tbc">TBC</span></td>
+            </tr>
+            <tr>
+              <td><strong>Power</strong></td>
+              <td>Multi-Channel Benchtop DC Power Supplies (0–30V, 5A), Current-Limited Regulators, Battery Holders</td>
+              <td><span class="status-badge-tbc">TBC</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="font-size: 0.8rem; color: #5a4b3d; text-align: right;">
+          * Specific equipment availability and lab allocations will be confirmed upon formal schedule publication.
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 07: SPONSORS — AUTHORIZED PARTNERS
+    ======================================================== -->
+    <section id="sponsors" class="bureau-section" data-section-num="07">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag amber">AUTHORIZED PARTNERS // LEVEL 07</div>
+        <h2 class="section-main-heading">Our Sponsors</h2>
+        <div class="bureau-tag amber" style="margin-top: 4px;">SPONSORS TO BE ANNOUNCED</div>
+        <p class="section-subtext">Official partners supporting the hardware prototyping facilities and prize pool for OVERCLOCK 2027.</p>
+      </div>
+
+      <div class="sponsors-pinboard-deck">
+        <div class="pinboard-cork-mesh" aria-hidden="true"></div>
+
+        <!-- Dynamically rendered tiers & authorization clearance cards -->
+        <div id="sponsors-tier-container" class="sponsors-tier-wrapper">
+          <!-- Populated from sponsors-config.js via app.js -->
+        </div>
+
+        <!-- Partnership Requisition Notice Panel -->
+        <div class="partnership-requisition-panel">
+          <div class="partnership-notice-text">
+            <div class="notice-title">PARTNERSHIP REQUISITION OPEN</div>
+            <p>Interested in supporting OVERCLOCK 2027? Get in touch with the organizing team to discuss hardware sponsorships, lab tools, and technical mentorship.</p>
+          </div>
+          <div class="partnership-actions-wrap">
+            <a id="sponsor-contact-btn" href="mailto:sponsorship.overclock@fcrit.ac.in" class="btn-bureau-brass">Become a Sponsor</a>
+            <a id="sponsor-brochure-btn" href="#" class="btn-bureau-secondary" style="display: none;">Download Sponsorship Brochure</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         LEVEL 08: FAQ — CASE FILES
+    ======================================================== -->
+    <section id="faq" class="bureau-section" data-section-num="08">
+      <div class="section-rubber-stamp">PENDING</div>
+
+      <div class="section-header-wrap">
+        <div class="bureau-tag">INQUIRY ARCHIVE // LEVEL 08</div>
+        <h2 class="section-main-heading">Case Files (FAQ)</h2>
+        <p class="section-subtext">Classified inquiries and operational questions answered directly by the Bureau.</p>
+      </div>
+
+      <div class="case-files-accordion">
+        <!-- Case 001 -->
+        <div class="case-folder-unit open">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #001</span>
+              <span class="folder-query-title">Who is organizing OVERCLOCK 2027?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[OPEN]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              OVERCLOCK 2027 is organized by the IEEE Student Branch at Fr. C. Rodrigues Institute of Technology (FCRIT), Vashi, Navi Mumbai. All theme parameters and dates are currently proposed and subject to formal institutional approvals.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 002 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #002</span>
+              <span class="folder-query-title">What is the team size and eligibility criteria?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Eligibility and team size specifics are currently TBD and will be finalized upon release of the official rulebook.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 003 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #003</span>
+              <span class="folder-query-title">Can we build software-only projects?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              No. OVERCLOCK is dedicated strictly to physical hardware engineering. Every project must interface with real microcontrollers, sensors, actuators, or discrete circuitry.
+            </div>
+          </div>
+        </div>
+
+        <!-- Case 004 -->
+        <div class="case-folder-unit">
+          <div class="folder-tab-bar">
+            <div>
+              <span class="folder-case-num">CASE #004</span>
+              <span class="folder-query-title">Will hardware components be provided on campus?</span>
+            </div>
+            <span style="font-family: var(--font-mono); color: var(--amber-bright);">[EXPAND]</span>
+          </div>
+          <div class="folder-content-drawer">
+            <div class="folder-drawer-inner">
+              <div class="answered-stamp-badge">ANSWERED</div>
+              Lab test instruments and fundamental prototyping equipment will be accessible. Specific kit provisions will be confirmed upon registration launch.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================
+       LEVEL 09: FOOTER — METAL FILING CABINET DRAWER
+  ========================================================== -->
+  <footer class="filing-cabinet-footer">
+    <div class="footer-inner-container">
+      <div class="filing-drawer-box">
+        <div class="drawer-pull-handle"></div>
+
+        <div class="cabinet-tabs-grid">
+          <a href="#" class="cabinet-index-tab">PIN 1: EMAIL</a>
+          <a href="#" class="cabinet-index-tab">PIN 2: INSTAGRAM</a>
+          <a href="#" class="cabinet-index-tab">PIN 3: LINKEDIN</a>
+          <button class="cabinet-index-tab open-case-file-trigger" style="cursor: pointer;">PIN 4: REGISTER</button>
+          <a href="#" class="cabinet-index-tab">PIN 5: FCRIT</a>
+          <a href="#" class="cabinet-index-tab">PIN 6: IEEE SB</a>
+          <a href="#sponsors" class="cabinet-index-tab">PIN 7: SPONSORS</a>
+          <a href="#" class="cabinet-index-tab">PIN 8: LOCATION</a>
+          <a href="#hero" class="cabinet-index-tab">PIN 9: TOP</a>
+        </div>
+
+        <div class="center-timeline-complete-card">
+          <div class="complete-title">OVERCLOCK 2027 — TIMELINE COMPLETE</div>
+          <p style="font-family: var(--font-typewriter); color: var(--text-muted); margin-top: 8px;">
+            All Bureau machine cycles synchronized. Thank you for visiting the timeline.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-single-attribution">
+        Organised by the IEEE Student Branch, Fr. C. Rodrigues Institute of Technology, Vashi, Navi Mumbai.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================
+       CORNER HUD (BOTTOM-RIGHT CRT MONITOR WITH REAL-TIME CLOCK)
+  ========================================================== -->
+  <aside class="corner-bureau-hud" aria-live="off">
+    <span class="hud-pulse-dot"></span>
+    <span id="hud-section-label">SECTION 01/09</span>
+    <span>·</span>
+    <span>TIMELINE STABLE</span>
+    <span>·</span>
+    <span id="hud-live-clock">00:00:00</span>
+  </aside>
+
+  <!-- ==========================================================
+       MODAL DIALOG: OPEN A CASE FILE (EXPRESS INTEREST)
+  ========================================================== -->
+  <div id="case-file-modal" class="bureau-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="bureau-modal-card">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="Close Case File Dialog">✕</button>
+      
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--amber-bright); margin-bottom: 6px;">
+        CASE INTAKE FORM // REF: OC-2027-INTAKE
+      </div>
+      <h3 id="modal-title" style="font-family: var(--font-display); font-size: 2rem; color: var(--paper-cream); margin-bottom: 18px;">
+        Open a Case File
+      </h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">
+        Express your interest to receive timeline notices, domain briefs, and registration announcements first.
+      </p>
+
+      <form id="case-intake-form">
+        <div class="modal-form-group">
+          <label for="intake-name">FULL NAME</label>
+          <input type="text" id="intake-name" class="modal-input" placeholder="e.g. Alan Turing" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="intake-email">EMAIL ADDRESS</label>
+          <input type="email" id="intake-email" class="modal-input" placeholder="e.g. builder@fcrit.ac.in" required>
+        </div>
+        <div class="modal-form-group">
+          <label for="intake-domain">PREFERRED BRANCH</label>
+          <select id="intake-domain" class="modal-input" style="cursor: pointer;">
+            <option value="sustainable">Branch 01 — Sustainable Technology</option>
+            <option value="smart-communities">Branch 02 — Smart Communities</option>
+            <option value="intelligent-systems">Branch 03 — Intelligent Systems</option>
+            <option value="resilient-infra">Branch 04 — Resilient Infrastructure</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-bureau-brass" style="width: 100%; justify-content: center; margin-top: 12px;">
+          Submit to Bureau Archive
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application & Engine Scripts -->
+  <script src="bureau-engine.js"></script>
+  <script src="sponsors-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
